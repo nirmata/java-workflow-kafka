@@ -15,11 +15,6 @@
  */
 package com.nirmata.workflow;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.nirmata.workflow.admin.WorkflowAdmin;
-import com.nirmata.workflow.admin.WorkflowManagerState;
-import org.apache.curator.utils.ThreadUtils;
 import java.io.Closeable;
 import java.time.Duration;
 import java.util.LinkedList;
@@ -27,6 +22,11 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.nirmata.workflow.admin.WorkflowAdmin;
+import com.nirmata.workflow.admin.WorkflowManagerState;
 
 public class WorkflowManagerStateSampler implements Closeable
 {

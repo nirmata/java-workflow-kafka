@@ -15,6 +15,9 @@
  */
 package com.nirmata.workflow;
 
+import java.io.Closeable;
+import java.util.Optional;
+
 import com.nirmata.workflow.admin.WorkflowAdmin;
 import com.nirmata.workflow.events.WorkflowListenerManager;
 import com.nirmata.workflow.executor.TaskExecutor;
@@ -22,9 +25,6 @@ import com.nirmata.workflow.models.RunId;
 import com.nirmata.workflow.models.Task;
 import com.nirmata.workflow.models.TaskExecutionResult;
 import com.nirmata.workflow.models.TaskId;
-import org.apache.curator.framework.CuratorFramework;
-import java.io.Closeable;
-import java.util.Optional;
 
 /**
  * Main API - create via {@link WorkflowManagerBuilder}

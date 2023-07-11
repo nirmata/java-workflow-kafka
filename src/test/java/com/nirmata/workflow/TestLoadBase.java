@@ -15,15 +15,15 @@
  */
 package com.nirmata.workflow;
 
+import java.nio.charset.Charset;
+import java.time.Duration;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.io.Resources;
 import com.nirmata.workflow.models.Task;
 import com.nirmata.workflow.serialization.JsonSerializerMapper;
-
-import org.apache.curator.test.Timing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.nio.charset.Charset;
-import java.time.Duration;
 
 /**
  * Common base to ensure identical inputs for comparing load test results

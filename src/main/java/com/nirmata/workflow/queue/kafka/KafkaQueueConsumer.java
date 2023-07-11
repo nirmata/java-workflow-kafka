@@ -16,27 +16,6 @@
 
 package com.nirmata.workflow.queue.kafka;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.mongodb.MongoInterruptedException;
-import com.nirmata.workflow.admin.WorkflowManagerState;
-import com.nirmata.workflow.details.KafkaHelper;
-import com.nirmata.workflow.models.ExecutableTask;
-import com.nirmata.workflow.models.TaskMode;
-import com.nirmata.workflow.models.TaskType;
-import com.nirmata.workflow.queue.QueueConsumer;
-import com.nirmata.workflow.queue.TaskRunner;
-import com.nirmata.workflow.serialization.Serializer;
-import org.apache.curator.utils.ThreadUtils;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.errors.InterruptException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.io.Closeable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -49,8 +28,30 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.errors.InterruptException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.mongodb.MongoInterruptedException;
+import com.nirmata.workflow.ThreadUtils;
+import com.nirmata.workflow.admin.WorkflowManagerState;
+import com.nirmata.workflow.details.KafkaHelper;
+import com.nirmata.workflow.models.ExecutableTask;
+import com.nirmata.workflow.models.TaskMode;
+import com.nirmata.workflow.models.TaskType;
+import com.nirmata.workflow.queue.QueueConsumer;
+import com.nirmata.workflow.queue.TaskRunner;
+import com.nirmata.workflow.serialization.Serializer;
+
 @VisibleForTesting
-public class KafkaQueueConsumer implements Closeable, QueueConsumer {
+public class KafkaQueueConsumer implements QueueConsumer {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final KafkaHelper client;
     private final Consumer<String, byte[]> consumer;

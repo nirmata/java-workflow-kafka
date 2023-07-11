@@ -17,18 +17,6 @@ package com.nirmata.workflow;
 
 import java.util.Collections;
 
-import com.nirmata.workflow.details.KafkaHelper;
-import com.nirmata.workflow.models.RunId;
-import com.nirmata.workflow.models.TaskType;
-import com.nirmata.workflow.storage.StorageManager;
-import com.nirmata.workflow.storage.StorageManagerMongoImpl;
-
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryOneTime;
-import org.apache.curator.test.TestingServer;
-import org.apache.curator.test.Timing;
-import org.apache.curator.utils.CloseableUtils;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -36,6 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+
+import com.nirmata.workflow.details.KafkaHelper;
+import com.nirmata.workflow.models.RunId;
+import com.nirmata.workflow.models.TaskType;
+import com.nirmata.workflow.storage.StorageManager;
+import com.nirmata.workflow.storage.StorageManagerMongoImpl;
 
 public abstract class BaseForTests {
     protected static String KAFKA_ADDR = "localhost:9092";
@@ -46,8 +40,6 @@ public abstract class BaseForTests {
     protected static boolean useMongo = false;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    protected TestingServer server;
-    protected CuratorFramework curator;
     protected final Timing timing = new Timing();
 
     static {
@@ -61,17 +53,12 @@ public abstract class BaseForTests {
 
     @BeforeMethod
     public void setup() throws Exception {
-        server = new TestingServer();
-
-        curator = CuratorFrameworkFactory.builder().connectString(server.getConnectString())
-                .retryPolicy(new RetryOneTime(1)).build();
-        curator.start();
+ 
     }
 
     @AfterMethod
     public void teardown() throws Exception {
-        CloseableUtils.closeQuietly(curator);
-        CloseableUtils.closeQuietly(server);
+
     }
 
     protected WorkflowManagerKafkaBuilder createWorkflowKafkaBuilder() {

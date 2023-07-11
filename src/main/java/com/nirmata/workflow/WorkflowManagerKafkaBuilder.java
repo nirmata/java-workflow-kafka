@@ -15,15 +15,15 @@
  */
 package com.nirmata.workflow;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import com.nirmata.workflow.details.KafkaHelper;
 import com.nirmata.workflow.details.WorkflowManagerKafkaImpl;
 import com.nirmata.workflow.queue.kafka.KafkaSimpleQueueFactory;
 import com.nirmata.workflow.storage.StorageManager;
 import com.nirmata.workflow.storage.StorageManagerMongoImpl;
 import com.nirmata.workflow.storage.StorageManagerNoOpImpl;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Builds {@link WorkflowManager} instances

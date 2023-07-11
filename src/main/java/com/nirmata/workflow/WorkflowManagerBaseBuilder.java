@@ -15,6 +15,10 @@
  */
 package com.nirmata.workflow;
 
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.Executor;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -24,18 +28,14 @@ import com.nirmata.workflow.details.TaskExecutorSpec;
 import com.nirmata.workflow.executor.TaskExecutor;
 import com.nirmata.workflow.models.TaskType;
 import com.nirmata.workflow.queue.QueueFactory;
-import com.nirmata.workflow.queue.zookeeper.ZooKeeperSimpleQueueFactory;
+import com.nirmata.workflow.queue.kafka.KafkaSimpleQueueFactory;
 import com.nirmata.workflow.serialization.Serializer;
 import com.nirmata.workflow.serialization.StandardSerializer;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.Executor;
 
 public abstract class WorkflowManagerBaseBuilder {
 
     protected final List<TaskExecutorSpec> specs = Lists.newArrayList();
-    protected QueueFactory queueFactory = new ZooKeeperSimpleQueueFactory();
+    protected QueueFactory queueFactory = new KafkaSimpleQueueFactory();
     protected String instanceName;
     protected AutoCleanerHolder autoCleanerHolder = newNullHolder();
     protected Serializer serializer = new StandardSerializer();

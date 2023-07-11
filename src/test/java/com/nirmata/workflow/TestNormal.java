@@ -16,30 +16,6 @@
 
 package com.nirmata.workflow;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
-import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
-import com.nirmata.workflow.admin.RunInfo;
-import com.nirmata.workflow.admin.StandardAutoCleaner;
-import com.nirmata.workflow.admin.TaskInfo;
-import com.nirmata.workflow.details.WorkflowManagerImpl;
-import com.nirmata.workflow.executor.TaskExecution;
-import com.nirmata.workflow.executor.TaskExecutionStatus;
-import com.nirmata.workflow.executor.TaskExecutor;
-import com.nirmata.workflow.models.ExecutableTask;
-import com.nirmata.workflow.models.RunId;
-import com.nirmata.workflow.models.Task;
-import com.nirmata.workflow.models.TaskExecutionResult;
-import com.nirmata.workflow.models.TaskId;
-import com.nirmata.workflow.models.TaskType;
-import com.nirmata.workflow.serialization.JsonSerializerMapper;
-import org.apache.curator.utils.CloseableUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Arrays;
@@ -51,6 +27,31 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
+import com.google.common.io.Resources;
+import com.nirmata.workflow.admin.RunInfo;
+import com.nirmata.workflow.admin.StandardAutoCleaner;
+import com.nirmata.workflow.admin.TaskInfo;
+import com.nirmata.workflow.details.WorkflowManagerKafkaImpl;
+import com.nirmata.workflow.executor.TaskExecution;
+import com.nirmata.workflow.executor.TaskExecutionStatus;
+import com.nirmata.workflow.executor.TaskExecutor;
+import com.nirmata.workflow.models.ExecutableTask;
+import com.nirmata.workflow.models.RunId;
+import com.nirmata.workflow.models.Task;
+import com.nirmata.workflow.models.TaskExecutionResult;
+import com.nirmata.workflow.models.TaskId;
+import com.nirmata.workflow.models.TaskType;
+import com.nirmata.workflow.serialization.JsonSerializerMapper;
 
 public class TestNormal extends BaseForTests
 {
@@ -72,8 +73,7 @@ public class TestNormal extends BaseForTests
             }
         };
         TaskType taskType = new TaskType("test", "1", true);
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor, 10, taskType)
             .build();
         try
@@ -112,8 +112,7 @@ public class TestNormal extends BaseForTests
 
         TaskExecutor taskExecutor = (w, t) -> () -> new TaskExecutionResult(TaskExecutionStatus.SUCCESS, "");
         TaskType taskType = new TaskType("test", "1", true);
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor, 10, taskType)
             .withAutoCleaner(new StandardAutoCleaner(Duration.ofMillis(1)), Duration.ofMillis(1))
             .build();
@@ -154,8 +153,7 @@ public class TestNormal extends BaseForTests
             return new TaskExecutionResult(TaskExecutionStatus.SUCCESS, "");
         };
         TaskType taskType = new TaskType("test", "1", true);
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor, 10, taskType)
             .build();
         try
@@ -183,8 +181,7 @@ public class TestNormal extends BaseForTests
     public void testSingleClientSimple() throws Exception
     {
         TestTaskExecutor taskExecutor = new TestTaskExecutor(6);
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor, 10, new TaskType("test", "1", true))
             .build();
         try
@@ -231,8 +228,7 @@ public class TestNormal extends BaseForTests
         List<WorkflowManager> workflowManagers = Lists.newArrayList();
         for ( int i = 0; i < QTY; ++i )
         {
-            WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-                .withCurator(curator, "test", "1")
+            WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
                 .addingTaskExecutor(taskExecutor, 10, taskType)
                 .build();
             workflowManagers.add(workflowManager);
@@ -268,8 +264,7 @@ public class TestNormal extends BaseForTests
     @Test
     public void testNoData() throws Exception
     {
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(new TestTaskExecutor(1), 10, new TaskType("test", "1", true))
             .build();
 
@@ -289,8 +284,7 @@ public class TestNormal extends BaseForTests
             return new TaskExecutionResult(TaskExecutionStatus.SUCCESS, "test", resultData);
         };
         TaskType taskType = new TaskType("test", "1", true);
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor, 10, taskType)
             .build();
         try
@@ -334,8 +328,7 @@ public class TestNormal extends BaseForTests
             return new TaskExecutionResult(TaskExecutionStatus.SUCCESS, "");
         };
         TaskType taskType = new TaskType("test", "1", true);
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor, 10, taskType)
             .build();
         try
@@ -387,8 +380,7 @@ public class TestNormal extends BaseForTests
             RunId subTaskRunId = task.getTaskId().equals(groupAParent.getTaskId()) ? workflowManager.submitSubTask(task.getRunId(), groupBTask) : null;
             return new TaskExecutionResult(TaskExecutionStatus.SUCCESS, "test", Maps.newHashMap(), subTaskRunId);
         };
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor, 10, taskType)
             .build();
         try
@@ -421,8 +413,7 @@ public class TestNormal extends BaseForTests
         TaskType taskType3 = new TaskType("type3", "1", true);
 
         TestTaskExecutor taskExecutor = new TestTaskExecutor(6);
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor, 10, taskType1)
             .addingTaskExecutor(taskExecutor, 10, taskType2)
             .addingTaskExecutor(taskExecutor, 10, taskType3)
@@ -480,8 +471,7 @@ public class TestNormal extends BaseForTests
             return new TaskExecutionResult(TaskExecutionStatus.SUCCESS, "");
         };
 
-        WorkflowManager workflowManager = WorkflowManagerBuilder.builder()
-            .withCurator(curator, "test", "1")
+        WorkflowManager workflowManager = WorkflowManagerKafkaBuilder.builder()
             .addingTaskExecutor(taskExecutor1, 10, taskType1)
             .addingTaskExecutor(taskExecutor2, 10, taskType2)
             .addingTaskExecutor(taskExecutor3, 10, taskType3)
@@ -519,6 +509,6 @@ public class TestNormal extends BaseForTests
     {
         CloseableUtils.closeQuietly(workflowManager);
         timing.sleepABit();
-        ((WorkflowManagerImpl)workflowManager).debugValidateClosed();
+        ((WorkflowManagerKafkaImpl)workflowManager).debugValidateClosed();
     }
 }
