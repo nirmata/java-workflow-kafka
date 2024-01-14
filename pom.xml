@@ -57,7 +57,7 @@
         <repository>
             <id>nirmata-github</id>
             <name>Nirmata Maven</name>
-            <url>https://maven.pkg.github.com/nirmata/java-common</url>
+            <url>https://maven.pkg.github.com/nirmata/java-workflow-kafka</url>
         </repository>
     </distributionManagement>
 
